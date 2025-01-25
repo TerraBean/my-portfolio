@@ -9,8 +9,8 @@ export default function Hero() {
             <div className='container mx-auto py-20'>
                 <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
                     <div className='flex flex-col gap-10 justify-center items-start'>
-                        <h1 className='text-6xl font-bold'>Hello, I'm Mujahid. A Full Stack <span className='text-[#FFAB48]'>Developer</span></h1>
-                        <h2 className='text-2xl font-semibold'>Looking for a full stack developer for your web and mobile app, shouldn't be a struggle.</h2>
+                        <h1 className='text-6xl font-bold'>Hello, I&apos;m Mujahid. A Full Stack <span className='text-[#FFAB48]'>Developer</span></h1>
+                        <h2 className='text-2xl font-semibold'>Looking for a full stack developer for your web and mobile app, shouldn&apos;t be a struggle.</h2>
 
                         <div className='flex gap-4'>
                             <a
