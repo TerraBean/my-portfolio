@@ -95,13 +95,13 @@ export default function Home() {
       </section>
 
       {/* Skills Section */}
-      <section id="skills" className="w-full bg-[#000000] text-white py-10">
+      <section id="skills" className="w-full bg-[#000000] text-white px-8 py-10">
         <h2 className="text-3xl text-center text-brand-red font-bold mb-8">Skills</h2>
-        <div className="container mx-auto grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div className="container mx-auto grid grid-cols-2 md:grid-cols-3 gap-6">
           {skills.map((skill, index) => (
             <div
               key={index}
-              className="flex items-center py-10 justify-center gap-4 p-4 bg-[#1F1F1F] rounded-lg"
+              className="flex flex-col md:flex-row items-center py-10 justify-center gap-4 p-4 bg-[#1F1F1F] rounded-lg"
             >
               <Image
                 src={skill.image}
@@ -109,7 +109,7 @@ export default function Home() {
                 width={50}
                 height={50}
               />
-              <p className="text-lg">{skill.name}</p>
+              <p className="text-sm font-semibold md:text-lg">{skill.name}</p>
             </div>
           ))}
         </div>
