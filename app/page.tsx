@@ -86,7 +86,7 @@ export default function Home() {
             </div>
             <div className="flex flex-col gap-10 justify-center items-start px-10">
               <h1 className="text-3xl text-brand-red font-bold">About</h1>
-              <p>I am a results-driven software engineer specializing in mobile and web application development with technologies like Flutter, Firebase, and Next.js. My projects prioritize usability, performance, and real-world impact.
+              <p className="text-xl">I am a results-driven software engineer specializing in mobile and web application development with technologies like Flutter, Firebase, and Next.js. My projects prioritize usability, performance, and real-world impact.
                 Teaching is a key part of my journey, from mentoring students in web technologies to empowering them with essential IT and design skills.
                 I thrive on solving complex challenges and creating innovative solutions. Beyond coding, I&apos;m passionate about exploring current affairs, engaging in critical thinking, and continuously learning.</p>
             </div>
@@ -95,7 +95,7 @@ export default function Home() {
       </section>
 
       {/* Skills Section */}
-      <section id="skills" className="w-full bg-[#000000] text-white px-8 py-10">
+      <section id="skills" className="w-full bg-[#000000] text-white px-8 lg:px-40 py-10">
         <h2 className="text-3xl text-center text-brand-red font-bold mb-8">Skills</h2>
         <div className="container mx-auto grid grid-cols-2 md:grid-cols-3 gap-6">
           {skills.map((skill, index) => (

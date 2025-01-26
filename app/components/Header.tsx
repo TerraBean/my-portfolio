@@ -13,8 +13,8 @@ interface NavItem {
 const navItems: NavItem[] = [
     { label: "Home", href: "/" },
     { label: "About", href: "/#about" },
-    { label: "Skills", href: "/skills" },
-    { label: "Contact", href: "/contact" },
+    { label: "Skills", href: "/#skills" },
+    { label: "Contact", href: "/#" },
 ];
 
 const Navbar: React.FC = () => {
