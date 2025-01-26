@@ -8,15 +8,16 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-    { label: "Home", href: "/about" },
-    { label: "About", href: "/services" },
+    { label: "Home", href: "/" },
+    { label: "About", href: "/#about" },
     { label: "Skills", href: "/skills" },
     { label: "Contact", href: "/contact" },
 ];
 
 const Navbar: React.FC = () => {
     return (
-        <nav className="bg-[#22292F] text-white">
+        
+        <nav className="bg-[#22292F] text-white sticky top-0 z-50">
             <div className="container mx-auto flex justify-between items-center px-4 py-6">
                 {/* Logo Section */}
                 <div>

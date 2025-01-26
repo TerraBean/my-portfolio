@@ -1,6 +1,72 @@
 import Image from "next/image";
 import Hero from "./components/Hero";
 
+// Create an array for skills using data from icons folder in public, the data will be an array of objects with name and image properties
+const skills = [
+  {
+    name: "NextJS",
+    image: "/icons/next-js.svg",
+  },
+  // add flutter, nodejs, and dart to the skills array
+  {
+    name: "Flutter",
+    image: "/icons/flutter.svg",
+  },
+  {
+    name: "Dart",
+    image: "/icons/dart.svg",
+  },
+  {
+    name: "Firebase",
+    image: "/icons/firebase.svg",
+  },
+  {
+    name: "HTML",
+    image: "/icons/html.svg",
+  },
+  {
+    name: "CSS",
+    image: "/icons/css.svg",
+  },
+  {
+    name: "Javascript",
+    image: "/icons/js.svg",
+  },
+  {
+    name:"React",
+    image: "/icons/react.svg",
+  },
+  {
+    name: "Figma",
+    image: "/icons/figma.svg",
+  },
+  {
+    name: "Java",
+    image: "/icons/java.svg",
+  },
+  
+  {
+    name: "MySql",
+    image: "/icons/mysql.svg",
+  },
+  {
+    name: "Node.js",
+    image: "/icons/nodejs.svg",
+  },
+  {
+    name: "Python",
+    image: "/icons/python.svg",
+  },
+  {
+    name: "Illustrator",
+    image: "/icons/illustrator.svg",
+  },
+  {
+    name: "Photoshop",
+    image: "/icons/photoshop.svg",
+  },
+];
+
 export default function Home() {
   return (
     <main>
@@ -25,6 +91,27 @@ export default function Home() {
                 I thrive on solving complex challenges and creating innovative solutions. Beyond coding, I&apos;m passionate about exploring current affairs, engaging in critical thinking, and continuously learning.</p>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Skills Section */}
+      <section id="skills" className="w-full bg-[#000000] text-white py-10">
+        <h2 className="text-3xl text-center text-brand-red font-bold mb-8">Skills</h2>
+        <div className="container mx-auto grid grid-cols-2 md:grid-cols-4 gap-6">
+          {skills.map((skill, index) => (
+            <div
+              key={index}
+              className="flex items-center py-10 justify-center gap-4 p-4 bg-[#1F1F1F] rounded-lg"
+            >
+              <Image
+                src={skill.image}
+                alt={skill.name}
+                width={50}
+                height={50}
+              />
+              <p className="text-lg">{skill.name}</p>
+            </div>
+          ))}
         </div>
       </section>
     </main>
