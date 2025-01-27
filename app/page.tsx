@@ -1,3 +1,5 @@
+'use client';
+
 import Image from "next/image";
 import Hero from "./components/Hero";
 
@@ -67,6 +69,39 @@ const skills = [
   },
 ];
 
+interface Project {
+  title: string;
+  description: string;
+  imageUrl: string; // URL or path to the project image
+  projectUrl: string; // Link to the live project
+  githubUrl?: string; // Optional: Link to the GitHub repository
+  technologies: string[]; // List of technologies used
+}
+
+const projects: Project[] = [
+  {
+      title: "Elirod Soccer Accademy",
+      description: "At EliRod Soccer Academy, we are passionate about helping young athletes unlock their full potential.",
+      imageUrl: "/images/elirodacademy.jpeg",
+      projectUrl: "https://elirodsocceraccademy.com",
+      technologies: ["React", "Next.js", "Tailwind CSS"],
+  },
+  {
+      title: "Awurade Ne Yenhwfo",
+      description: "Awurade ne yɛn hwɛfoɔ is an organization dedicated to advocating for the interests of Ghanaians and fostering community engagement.",
+      imageUrl: "/images/awuradeneyenhwefo.jpeg",
+      projectUrl: "https://awuradeneyenhwefo.org",
+      technologies: ["Next.js,","Tailwind", "Typescript"],
+  },
+  {
+      title: "WhisperNews",
+      description: "WhisperNews is a news platform that provides users with the latest news and updates.",
+      imageUrl: "/images/whispernews.jpeg",
+      projectUrl: "https://whispernews.vercel.app/",
+      technologies: ["Vue.js", "Firebase", "SASS"],
+  },
+];
+
 export default function Home() {
   return (
     <main>
@@ -112,6 +147,50 @@ export default function Home() {
               <p className="text-sm font-semibold md:text-lg">{skill.name}</p>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* Projects Section */}
+      <section id="projects" className="w-full bg-[#010F1A] text-white py-20">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl text-brand-red font-bold text-center mb-10">Projects</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {projects.map((project, index) => (
+              <div key={index} className="bg-[#1A1A1A] rounded-lg overflow-hidden">
+                <Image
+                  src={project.imageUrl}
+                  alt={project.title}
+                  width={500}
+                  height={300}
+                  className="rounded-t-lg"
+                />
+                <div className="p-6">
+                  <h3 className="text-xl font-bold mb-2">{project.title}</h3>
+                  <p className="text-gray-300 mb-4">{project.description}</p>
+                  <div className="flex gap-4">
+                    <a
+                      href={project.projectUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="bg-brand-red text-white py-2 px-4 rounded-md text-sm hover:bg-opacity-80"
+                    >
+                      View Project
+                    </a>
+                    {project.githubUrl && (
+                      <a
+                        href={project.githubUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="bg-[#333] text-white py-2 px-4 rounded-md text-sm hover:bg-opacity-80"
+                      >
+                        View Code
+                      </a>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
     </main>

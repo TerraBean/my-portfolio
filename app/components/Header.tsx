@@ -1,9 +1,8 @@
-// components/Navbar.tsx
-'use client';   
+'use client';
 import React, { useState } from "react";
-import Link from "next/link";
 import { FaBars, FaTimes } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
+import { Link as ScrollLink } from "react-scroll";
 
 interface NavItem {
     label: string;
@@ -11,10 +10,11 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-    { label: "Home", href: "/" },
-    { label: "About", href: "/#about" },
-    { label: "Skills", href: "/#skills" },
-    { label: "Contact", href: "/#" },
+    { label: "Home", href: "home" },
+    { label: "About", href: "about" },
+    { label: "Skills", href: "skills" },
+    { label: "Projects", href: "projects" },
+    { label: "Contact", href: "contact" },
 ];
 
 const Navbar: React.FC = () => {
@@ -29,18 +29,31 @@ const Navbar: React.FC = () => {
             <div className="container mx-auto flex justify-between items-center px-4 py-6">
                 {/* Logo Section */}
                 <div>
-                    <Link href="/" className="text-lg font-bold hover:text-gray-300">
+                    <ScrollLink
+                        to="home"
+                        smooth={true}
+                        duration={500}
+                        className="text-lg font-bold hover:text-gray-300 cursor-pointer"
+                    >
                         Adams Mujahid
-                    </Link>
+                    </ScrollLink>
                 </div>
 
                 {/* Desktop Navigation Links */}
                 <ul className="hidden md:flex space-x-4">
                     {navItems.map((item) => (
                         <li key={item.label}>
-                            <Link href={item.href} className="hover:text-gray-300">
+                            <ScrollLink
+                                to={item.href}
+                                smooth={true}
+                                duration={500}
+                                offset={-70} // Adjust this value based on your header height
+                                spy={true} // Enables active state tracking
+                                activeClass="text-[#FFD700]" // Class applied to the active link
+                                className="hover:text-gray-300 cursor-pointer transition-colors duration-200"
+                            >
                                 {item.label}
-                            </Link>
+                            </ScrollLink>
                         </li>
                     ))}
                 </ul>
@@ -70,13 +83,18 @@ const Navbar: React.FC = () => {
                         <ul className="flex flex-col space-y-4 px-4 pb-6">
                             {navItems.map((item) => (
                                 <li key={item.label}>
-                                    <Link
-                                        href={item.href}
-                                        className="block hover:text-gray-300 py-2"
+                                    <ScrollLink
+                                        to={item.href}
+                                        smooth={true}
+                                        duration={500}
+                                        offset={-70}
+                                        spy={true} // Enables active state tracking
+                                        activeClass="text-[#FFD700]" // Class applied to the active link
+                                        className="block hover:text-gray-300 py-2 cursor-pointer transition-colors duration-200"
                                         onClick={toggleMenu}
                                     >
                                         {item.label}
-                                    </Link>
+                                    </ScrollLink>
                                 </li>
                             ))}
                         </ul>
