@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Hero from "./components/Hero";
+import Testimonial from "./components/Testimonial";
 
 // Create an array for skills using data from icons folder in public, the data will be an array of objects with name and image properties
 const skills = [
@@ -35,7 +36,7 @@ const skills = [
     image: "/icons/js.svg",
   },
   {
-    name:"React",
+    name: "React",
     image: "/icons/react.svg",
   },
   {
@@ -46,7 +47,7 @@ const skills = [
     name: "Java",
     image: "/icons/java.svg",
   },
-  
+
   {
     name: "MySql",
     image: "/icons/mysql.svg",
@@ -80,25 +81,25 @@ interface Project {
 
 const projects: Project[] = [
   {
-      title: "Elirod Soccer Accademy",
-      description: "At EliRod Soccer Academy, we are passionate about helping young athletes unlock their full potential.",
-      imageUrl: "/images/elirodacademy.jpeg",
-      projectUrl: "https://elirodsocceraccademy.com",
-      technologies: ["React", "Next.js", "Tailwind CSS"],
+    title: "Elirod Soccer Accademy",
+    description: "At EliRod Soccer Academy, we are passionate about helping young athletes unlock their full potential.",
+    imageUrl: "/images/elirodacademy.jpeg",
+    projectUrl: "https://elirodsocceraccademy.com",
+    technologies: ["React", "Next.js", "Tailwind CSS"],
   },
   {
-      title: "Awurade Ne Yenhwfo",
-      description: "Awurade ne yɛn hwɛfoɔ is an organization dedicated to advocating for the interests of Ghanaians and fostering community engagement.",
-      imageUrl: "/images/awuradeneyenhwefo.jpeg",
-      projectUrl: "https://awuradeneyenhwefo.org",
-      technologies: ["Next.js,","Tailwind", "Typescript"],
+    title: "Awurade Ne Yenhwfo",
+    description: "Awurade ne yɛn hwɛfoɔ is an organization dedicated to advocating for the interests of Ghanaians and fostering community engagement.",
+    imageUrl: "/images/awuradeneyenhwefo.jpeg",
+    projectUrl: "https://awuradeneyenhwefo.org",
+    technologies: ["Next.js,", "Tailwind", "Typescript"],
   },
   {
-      title: "WhisperNews",
-      description: "WhisperNews is a news platform that provides users with the latest news and updates.",
-      imageUrl: "/images/whispernews.jpeg",
-      projectUrl: "https://whispernews.vercel.app/",
-      technologies: ["Vue.js", "Firebase", "SASS"],
+    title: "WhisperNews",
+    description: "WhisperNews is a news platform that provides users with the latest news and updates.",
+    imageUrl: "/images/whispernews.jpeg",
+    projectUrl: "https://whispernews.vercel.app/",
+    technologies: ["Vue.js", "Firebase", "SASS"],
   },
 ];
 
@@ -156,7 +157,7 @@ export default function Home() {
           <h2 className="text-3xl text-brand-red font-bold text-center mb-10">Projects</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {projects.map((project, index) => (
-              <div key={index} className="bg-[#1A1A1A] rounded-lg overflow-hidden">
+              <div key={index} className="bg-[#1A1A1A]  rounded-lg overflow-hidden">
                 <Image
                   src={project.imageUrl}
                   alt={project.title}
@@ -193,6 +194,9 @@ export default function Home() {
           </div>
         </div>
       </section>
-    </main>
+
+      {/* Testimonial Section */}
+     <Testimonial />
+    </main >
   );
 }
