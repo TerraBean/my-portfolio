@@ -11,12 +11,6 @@ interface TestimonialItem {
 }
 export const testimonialData: TestimonialItem[] = [
     {
-      name: "Adams Mujahid",
-      image: "/images/mujahid1.jpg",
-      role: "Full Stack Developer",
-      quote: "Passionate about creating seamless digital experiences that transform ideas into reality."
-    },
-    {
       name: "Kwame Kyerema Darkwah",
       image: "/images/Darkwa Kwame Kyerema(Chairman).jpg",
       role: "Founder Of Elirod Academy, CEO Of GH Purpose TV",
@@ -29,10 +23,10 @@ export const testimonialData: TestimonialItem[] = [
       quote: "Working with Adams was a pleasure. His technical expertise combined with great communication skills made our project successful. He went above and beyond to ensure everything was perfect."
     },
     {
-      name: "David Chen",
-      image: "/images/mujahid1.jpg",
-      role: "Startup Founder",
-      quote: "Adams transformed our concept into a beautiful, functional application. His problem-solving skills and dedication to quality are unmatched."
+        name: "Priscilla",
+        image: "/images/pricilla.jpg",
+        role: "Owner of Pringin Prints",
+        quote: "Adams has been my go-to developer for all my client referrals. His consistent delivery of high-quality work has made it easy to recommend him. Every client I've connected him with has been thoroughly impressed with his professionalism and technical expertise."
     }
   ];
 
