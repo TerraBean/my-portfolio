@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Hero from "./components/Hero";
 import Testimonial from "./components/Testimonial";
+import { AtSymbolIcon, UserIcon } from "@heroicons/react/24/outline";
 
 // Create an array for skills using data from icons folder in public, the data will be an array of objects with name and image properties
 const skills = [
@@ -84,7 +85,7 @@ const projects: Project[] = [
     title: "Elirod Soccer Accademy",
     description: "At EliRod Soccer Academy, we are passionate about helping young athletes unlock their full potential.",
     imageUrl: "/images/elirodacademy.jpeg",
-    projectUrl: "https://elirodsocceraccademy.com",
+    projectUrl: "https://elirodsocceracademy.com",
     technologies: ["React", "Next.js", "Tailwind CSS"],
   },
   {
@@ -194,9 +195,32 @@ export default function Home() {
           </div>
         </div>
       </section>
+      {/* Contact Section */}
+      <section className="bg-[#1A1A1A]">
+        <div className="container mx-auto px-4 py-20">
+          <h2 className="text-3xl text-brand-red font-bold text-center mb-10">
+            Contact Me
+          </h2>
+          <div className="relative">
+            <input  type="text" placeholder="Enter Your Name" className="w-full peer block pl-10 py-[9px]  rounded-lg mb-4 border-orange-700" />
+            <UserIcon className="absolute top-1/2 h-[18px] w-[18px] outline-2 -translate-y-1/2 left-4 peer-focus:text-black  text-gray-400" />
+          </div>
+      
+
+         <div className="relative">
+          <input 
+          type="text" 
+          className="w-full rounded-lg py-[9px] pl-10 peer text-gray-500"
+          placeholder="Enter your email" />
+
+          <AtSymbolIcon className="w-[19px] absolute top-1/2 -translate-y-1/2 left-3 h-[19px] text-gray-400 peer-focus:text-black"/>
+         </div>
+
+        </div>
+      </section>
 
       {/* Testimonial Section */}
-     <Testimonial />
+      <Testimonial />
     </main >
   );
 }
