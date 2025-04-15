@@ -25,22 +25,24 @@ const Navbar: React.FC = () => {
     };
 
     return (
-        <nav className="bg-[#22292F] text-white sticky top-0 z-50">
-            <div className="container mx-auto flex justify-between items-center px-4 py-6">
+        <nav className="bg-[#22292F]/80 backdrop-blur-md text-white sticky top-0 z-50 transition-all duration-300">
+            <div className="container mx-auto flex justify-between items-center px-4 py-4">
                 {/* Logo Section */}
                 <div>
                     <ScrollLink
                         to="home"
                         smooth={true}
                         duration={500}
-                        className="text-lg font-bold hover:text-gray-300 cursor-pointer"
+                        className="text-xl sm:text-2xl font-bold hover:text-brand-red cursor-pointer transition-all duration-300"
                     >
+                        <span className="text-brand-red">&lt;</span>
                         Adams Mujahid
+                        <span className="text-brand-red">/&gt;</span>
                     </ScrollLink>
                 </div>
 
                 {/* Desktop Navigation Links */}
-                <ul className="hidden md:flex space-x-4">
+                <ul className="hidden md:flex space-x-6">
                     {navItems.map((item) => (
                         <li key={item.label}>
                             <ScrollLink
@@ -50,7 +52,7 @@ const Navbar: React.FC = () => {
                                 offset={-70} // Adjust this value based on your header height
                                 spy={true} // Enables active state tracking
                                 activeClass="text-[#FFD700]" // Class applied to the active link
-                                className="hover:text-gray-300 cursor-pointer transition-colors duration-200"
+                                className="text-base sm:text-lg hover:text-gray-300 cursor-pointer transition-colors duration-200"
                             >
                                 {item.label}
                             </ScrollLink>

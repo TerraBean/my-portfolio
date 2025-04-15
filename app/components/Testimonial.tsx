@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface TestimonialItem {
   name: string;
@@ -38,49 +39,100 @@ const Testimonial = () => {
       setCurrentIndex(prev => 
         prev === testimonialData.length - 1 ? 0 : prev + 1
       );
-    }, 10000); // Change every 10 seconds
+    }, 10000);
 
     return () => clearInterval(interval);
   }, []);
+
+  const slideVariants = {
+    enter: (direction: number) => ({
+      x: direction > 0 ? 1000 : -1000,
+      opacity: 0
+    }),
+    center: {
+      zIndex: 1,
+      x: 0,
+      opacity: 1
+    },
+    exit: (direction: number) => ({
+      zIndex: 0,
+      x: direction < 0 ? 1000 : -1000,
+      opacity: 0
+    })
+  };
 
   return (
     <section id="testimonial" className="w-full bg-[#01182B] text-white py-20">
       <div className="container mx-auto">
         <div className="flex flex-col items-center">
-          <div className="flex flex-col items-center">
-            <div className="w-[250px] h-[250px] rounded-full overflow-hidden">
-              <Image
-                src={testimonialData[currentIndex].image}
-                alt={`${testimonialData[currentIndex].name}'s image`}
-                width={250}
-                height={250}
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <h3 className="text-4xl mt-5 text-[#ffc248]">
-              {testimonialData[currentIndex].name}
-            </h3>
-            {testimonialData[currentIndex].role && (
-              <p className="mt-2 text-gray-300">
-                {testimonialData[currentIndex].role}
-              </p>
-            )}
-            {testimonialData[currentIndex].quote && (
-              <p className="mt-4 text-center text-2xl max-w-2xl">
-                {testimonialData[currentIndex].quote}
-              </p>
-            )}
-          </div>
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div
+              key={currentIndex}
+              custom={currentIndex}
+              variants={slideVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{
+                x: { type: "spring", stiffness: 300, damping: 30 },
+                opacity: { duration: 0.2 }
+              }}
+              className="flex flex-col items-center"
+            >
+              <motion.div 
+                className="w-[250px] h-[250px] rounded-full overflow-hidden"
+                whileHover={{ scale: 1.05 }}
+                transition={{ type: "spring", stiffness: 400, damping: 10 }}
+              >
+                <Image
+                  src={testimonialData[currentIndex].image}
+                  alt={`${testimonialData[currentIndex].name}'s image`}
+                  width={250}
+                  height={250}
+                  className="w-full h-full object-cover"
+                />
+              </motion.div>
+              <motion.h3 
+                className="text-2xl sm:text-3xl lg:text-4xl mt-5 text-[#ffc248]"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+              >
+                {testimonialData[currentIndex].name}
+              </motion.h3>
+              {testimonialData[currentIndex].role && (
+                <motion.p 
+                  className="mt-2 text-base sm:text-lg lg:text-xl text-gray-300"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 }}
+                >
+                  {testimonialData[currentIndex].role}
+                </motion.p>
+              )}
+              {testimonialData[currentIndex].quote && (
+                <motion.p 
+                  className="mt-4 text-center text-lg sm:text-xl lg:text-2xl max-w-2xl"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 }}
+                >
+                  "{testimonialData[currentIndex].quote}"
+                </motion.p>
+              )}
+            </motion.div>
+          </AnimatePresence>
           
-          {/* Dots Navigation */}
           <div className="flex gap-2 mt-8">
             {testimonialData.map((_, index) => (
-              <button
+              <motion.button
                 key={index}
                 onClick={() => setCurrentIndex(index)}
                 className={`w-3 h-3 rounded-full transition-all duration-300 ${
                   index === currentIndex ? 'bg-brand-red scale-125' : 'bg-gray-400'
                 }`}
+                whileHover={{ scale: 1.2 }}
+                whileTap={{ scale: 0.9 }}
                 aria-label={`Go to testimonial ${index + 1}`}
               />
             ))}
