@@ -117,7 +117,7 @@ const Testimonial = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.4 }}
                 >
-                  "{testimonialData[currentIndex].quote}"
+                  &ldquo;{testimonialData[currentIndex].quote}&rdquo;
                 </motion.p>
               )}
             </motion.div>
