@@ -12,6 +12,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://your-domain.com'), // Replace with your actual domain in production
   title: "Adams Mujahid | Full Stack Developer",
   description: "Full Stack Developer specializing in web and mobile development using Next.js, Flutter, and Firebase",
   keywords: ["Full Stack Developer", "Web Development", "Mobile Development", "Next.js", "Flutter"],

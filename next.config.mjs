@@ -11,8 +11,7 @@ const nextConfig = {
   optimizeFonts: true,
   productionBrowserSourceMaps: false,
   experimental: {
-    optimizeCss: true,
-    turbo: true,
+    optimizeCss: false // Disable CSS optimization if it causes issues
   },
 };
 
