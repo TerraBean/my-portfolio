@@ -1,3 +1,5 @@
+// next.config.mjs
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
@@ -10,7 +12,6 @@ const nextConfig = {
   reactStrictMode: true,
   optimizeFonts: true,
   productionBrowserSourceMaps: false,
-  output: 'export', // Ensure static export is enabled
 };
 
 export default nextConfig;
