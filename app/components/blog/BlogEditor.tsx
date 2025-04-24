@@ -193,7 +193,7 @@ export default function BlogEditor({ content, onChange }: BlogEditorProps) {
           isActive={editor.isActive('blockquote')}
           title="Blockquote"
         >
-          "Quote"
+          &quot;Quote&quot;
         </ToolbarButton>
         
         <ToolbarButton

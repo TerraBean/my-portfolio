@@ -136,7 +136,7 @@ export default function EditBlogPost({ params }: { params: { id: string } }) {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <h1 className="text-3xl font-bold mb-4">Post Not Found</h1>
-            <p className="text-gray-400 mb-6">The blog post you're looking for doesn't exist or you don't have permission to edit it.</p>
+            <p className="text-gray-400 mb-6">The blog post you&apos;re looking for doesn&apos;t exist or you don&apos;t have permission to edit it.</p>
             <Link
               href="/blog/admin"
               className="px-6 py-2 bg-brand-red hover:bg-opacity-90 text-white rounded-md transition-colors"

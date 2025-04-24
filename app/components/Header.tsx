@@ -42,7 +42,7 @@ const Navbar: React.FC = () => {
         if (isMenuOpen) {
             setIsMenuOpen(false);
         }
-    }, [pathname]);
+    }, [pathname, isMenuOpen]);
 
     return (
         <nav className="bg-[#22292F]/80 backdrop-blur-md text-white sticky top-0 z-50 transition-all duration-300">
@@ -82,7 +82,7 @@ const Navbar: React.FC = () => {
                             )}
                         </li>
                     ))}
-                    {status === 'authenticated' && session?.user.isAdmin && (
+                    {status === 'authenticated' && session?.user.role === 'admin' && (
                         <>
                             <li>
                                 <Link
@@ -163,7 +163,7 @@ const Navbar: React.FC = () => {
                                     )}
                                 </li>
                             ))}
-                            {status === 'authenticated' && session?.user.isAdmin && (
+                            {status === 'authenticated' && session?.user.role === 'admin' && (
                                 <>
                                     <li>
                                         <Link
