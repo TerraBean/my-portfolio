@@ -1,10 +1,11 @@
 'use client';
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaBars, FaTimes } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link as ScrollLink } from "react-scroll";
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
+import { usePathname } from "next/navigation";
 
 interface NavItem {
     label: string;
@@ -15,6 +16,8 @@ interface NavItem {
 const Navbar: React.FC = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const { data: session, status } = useSession();
+    const pathname = usePathname();
+    const isHomePage = pathname === "/";
 
     const toggleMenu = () => {
         setIsMenuOpen(!isMenuOpen);
@@ -24,14 +27,22 @@ const Navbar: React.FC = () => {
         await signOut({ redirect: true, callbackUrl: '/' });
     };
 
+    // Define navigation items
     const navItems: NavItem[] = [
-        { label: "Home", href: "home", isScrollLink: true },
-        { label: "About", href: "about", isScrollLink: true },
-        { label: "Skills", href: "skills", isScrollLink: true },
-        { label: "Projects", href: "projects", isScrollLink: true },
-        { label: "Contact", href: "contact", isScrollLink: true },
+        { label: "Home", href: isHomePage ? "home" : "/#home", isScrollLink: isHomePage },
+        { label: "About", href: isHomePage ? "about" : "/#about", isScrollLink: isHomePage },
+        { label: "Skills", href: isHomePage ? "skills" : "/#skills", isScrollLink: isHomePage },
+        { label: "Projects", href: isHomePage ? "projects" : "/#projects", isScrollLink: isHomePage },
+        { label: "Contact", href: isHomePage ? "contact" : "/#contact", isScrollLink: isHomePage },
         { label: "Blog", href: "/blog", isScrollLink: false },
     ];
+
+    // Close menu when route changes
+    useEffect(() => {
+        if (isMenuOpen) {
+            setIsMenuOpen(false);
+        }
+    }, [pathname]);
 
     return (
         <nav className="bg-[#22292F]/80 backdrop-blur-md text-white sticky top-0 z-50 transition-all duration-300">

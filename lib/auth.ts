@@ -2,8 +2,8 @@ import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { neon } from '@neondatabase/serverless';
 
-// Get the database URL from environment variables
-const DATABASE_URL = process.env.DATABASE_URL || 'postgresql://neondb_owner:npg_kB0yUrqcg6pd@ep-black-glade-a46muedm-pooler.us-east-1.aws.neon.tech/neondb?sslmode=require';
+// Get the database URL from environment variables - ensure it's a string
+const DATABASE_URL = process.env.DATABASE_URL || '';
 
 // Create a SQL client
 const authSql = neon(DATABASE_URL);
@@ -25,7 +25,7 @@ declare module "next-auth" {
 declare module "next-auth/jwt" {
   interface JWT {
     id?: string;
-    role?: string;
+    role?: string | null;
   }
 }
 
@@ -67,8 +67,8 @@ export const authOptions: NextAuthOptions = {
             id: user.id.toString(),
             name: user.name,
             email: user.email,
-            role: user.role || 'user',
-          };
+            role: user.role || null,
+          } as any; // Use type assertion to bypass TypeScript check
         } catch (error) {
           console.error("Auth error:", error);
           return null;
@@ -93,10 +93,10 @@ export const authOptions: NextAuthOptions = {
     async session({ session, token }) {
       if (session.user) {
         session.user.id = token.id as string;
-        session.user.role = token.role as string;
+        session.user.role = token.role;
       }
       return session;
     },
   },
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: process.env.NEXTAUTH_SECRET || '',
 };
