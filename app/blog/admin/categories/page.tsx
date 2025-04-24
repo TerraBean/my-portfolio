@@ -3,6 +3,7 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { Metadata } from 'next';
+import DeleteButton from '@/app/components/blog/DeleteButton';
 
 export const metadata: Metadata = {
   title: 'Manage Categories | Admin Dashboard',
@@ -29,8 +30,13 @@ export default async function CategoriesPage() {
         slug,
         description,
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error creating category:', error);
+      // Check for unique constraint violation
+      if (error.code === '23505') {
+        // Handle the duplicate category error
+        return;
+      }
       return;
     }
     
@@ -211,23 +217,12 @@ export default async function CategoriesPage() {
                             </svg>
                             Edit
                           </Link>
-                          <form action={handleDeleteCategory} className="inline">
-                            <input type="hidden" name="id" value={category.id} />
-                            <button
-                              type="submit"
-                              className="px-3 py-1 bg-red-900/30 text-red-400 text-sm rounded hover:bg-red-900/50 transition-colors duration-150 flex items-center"
-                              onClick={(e) => {
-                                if (!confirm(`Are you sure you want to delete the category "${category.name}"? This action cannot be undone.`)) {
-                                  e.preventDefault();
-                                }
-                              }}
-                            >
-                              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                                <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
-                              </svg>
-                              Delete
-                            </button>
-                          </form>
+                          <DeleteButton 
+                            id={category.id} 
+                            name={category.name} 
+                            action={handleDeleteCategory}
+                            entityType="category"
+                          />
                         </div>
                       </td>
                     </tr>

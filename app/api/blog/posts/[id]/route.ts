@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getPostBySlug, updatePost, deletePost } from '@/lib/db';
+import { getPostById, updatePost, deletePost } from '@/lib/db';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 
@@ -14,7 +14,7 @@ export async function GET(
       return NextResponse.json({ error: 'Invalid ID' }, { status: 400 });
     }
 
-    const post = await getPostBySlug(params.id);
+    const post = await getPostById(id);
     
     if (!post) {
       return NextResponse.json({ error: 'Post not found' }, { status: 404 });

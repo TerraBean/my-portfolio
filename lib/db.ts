@@ -78,6 +78,32 @@ export async function getPostBySlug(slug: string) {
   }
 }
 
+export async function getPostById(id: number) {
+  try {
+    const result = await sql`
+      SELECT 
+        p.id, 
+        p.title, 
+        p.slug, 
+        p.excerpt, 
+        p.content, 
+        p.published, 
+        p.created_at, 
+        p.updated_at,
+        p.author_id,
+        u.name as author_name
+      FROM blog_posts p
+      JOIN users u ON p.author_id = u.id
+      WHERE p.id = ${id}
+    `;
+    
+    return result[0] || null;
+  } catch (error) {
+    console.error('Error fetching post by ID:', error);
+    return null;
+  }
+}
+
 export async function createPost(post: {
   title: string;
   slug: string;
