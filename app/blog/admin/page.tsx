@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { format } from 'date-fns';
+import { useToast } from '@/app/components/ui/toast';
 
 interface BlogPost {
   id: number;
@@ -19,8 +20,10 @@ interface BlogPost {
 export default function AdminDashboard() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [publishingPosts, setPublishingPosts] = useState<number[]>([]);
   const { data: session } = useSession();
   const router = useRouter();
+  const { showToast } = useToast();
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -52,17 +55,21 @@ export default function AdminDashboard() {
 
       if (response.ok) {
         setPosts(posts.filter(post => post.id !== id));
+        showToast('Post deleted successfully', 'success');
       } else {
-        alert('Failed to delete post');
+        showToast('Failed to delete post', 'error');
       }
     } catch (error) {
       console.error('Error deleting post:', error);
-      alert('An error occurred while deleting the post');
+      showToast('An error occurred while deleting the post', 'error');
     }
   };
 
   const handleTogglePublish = async (id: number, currentStatus: boolean) => {
     try {
+      // Add post ID to the publishing array to show loading state
+      setPublishingPosts(prev => [...prev, id]);
+      
       const response = await fetch(`/api/blog/posts/${id}`, {
         method: 'PATCH',
         headers: {
@@ -79,12 +86,24 @@ export default function AdminDashboard() {
             post.id === id ? { ...post, published: !currentStatus } : post
           )
         );
+        
+        // Show success toast
+        showToast(
+          `Post ${!currentStatus ? 'published' : 'unpublished'} successfully`, 
+          'success'
+        );
+        
+        // Refresh the page to update the cache
+        router.refresh();
       } else {
-        alert('Failed to update post status');
+        showToast('Failed to update post status', 'error');
       }
     } catch (error) {
       console.error('Error updating post:', error);
-      alert('An error occurred while updating the post');
+      showToast('An error occurred while updating the post', 'error');
+    } finally {
+      // Remove post ID from publishing array when done
+      setPublishingPosts(prev => prev.filter(postId => postId !== id));
     }
   };
 
@@ -171,20 +190,34 @@ export default function AdminDashboard() {
                         <div className="flex items-center space-x-3">
                           <button
                             onClick={() => handleTogglePublish(post.id, post.published)}
-                            className="text-gray-300 hover:text-white"
-                            title={post.published ? 'Unpublish' : 'Publish'}
+                            className={`px-3 py-1 rounded text-sm ${
+                              post.published 
+                                ? 'bg-yellow-900/30 text-yellow-400 hover:bg-yellow-900/50' 
+                                : 'bg-green-900/30 text-green-400 hover:bg-green-900/50'
+                            } transition-colors`}
+                            disabled={publishingPosts.includes(post.id)}
                           >
-                            {post.published ? 'Unpublish' : 'Publish'}
+                            {publishingPosts.includes(post.id) ? (
+                              <span className="flex items-center">
+                                <svg className="animate-spin -ml-1 mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                {post.published ? 'Unpublishing...' : 'Publishing...'}
+                              </span>
+                            ) : (
+                              <span>{post.published ? 'Unpublish' : 'Publish'}</span>
+                            )}
                           </button>
                           <Link
                             href={`/blog/admin/edit/${post.id}`}
-                            className="text-blue-400 hover:text-blue-300"
+                            className="px-3 py-1 rounded text-sm bg-blue-900/30 text-blue-400 hover:bg-blue-900/50 transition-colors"
                           >
                             Edit
                           </Link>
                           <button
                             onClick={() => handleDeletePost(post.id)}
-                            className="text-red-400 hover:text-red-300"
+                            className="px-3 py-1 rounded text-sm bg-red-900/30 text-red-400 hover:bg-red-900/50 transition-colors"
                           >
                             Delete
                           </button>

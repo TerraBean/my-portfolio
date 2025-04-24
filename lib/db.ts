@@ -1,35 +1,51 @@
-import { Pool } from '@neondatabase/serverless';
+import { neon, neonConfig } from '@neondatabase/serverless';
 
 // Get the database URL from environment variables
 const DATABASE_URL = process.env.DATABASE_URL || 'postgresql://neondb_owner:npg_kB0yUrqcg6pd@ep-black-glade-a46muedm-pooler.us-east-1.aws.neon.tech/neondb?sslmode=require';
 
 // Create a SQL client
-const pool = new Pool({ connectionString: DATABASE_URL });
+const sql = neon(DATABASE_URL);
 
 // Helper functions for blog operations
 export async function getAllPosts(includeUnpublished = false) {
   try {
-    const publishedClause = includeUnpublished ? '' : 'WHERE published = true';
-    
-    const query = `
-      SELECT 
-        p.id, 
-        p.title, 
-        p.slug, 
-        p.excerpt, 
-        p.content, 
-        p.published, 
-        p.created_at, 
-        p.updated_at,
-        u.name as author_name
-      FROM blog_posts p
-      JOIN users u ON p.author_id = u.id
-      ${publishedClause}
-      ORDER BY p.created_at DESC
-    `;
-    
-    const result = await pool.query(query);
-    return result.rows;
+    // Use conditional query based on includeUnpublished parameter
+    if (includeUnpublished) {
+      const result = await sql`
+        SELECT 
+          p.id, 
+          p.title, 
+          p.slug, 
+          p.excerpt, 
+          p.content, 
+          p.published, 
+          p.created_at, 
+          p.updated_at,
+          u.name as author_name
+        FROM blog_posts p
+        JOIN users u ON p.author_id = u.id
+        ORDER BY p.created_at DESC
+      `;
+      return result;
+    } else {
+      const result = await sql`
+        SELECT 
+          p.id, 
+          p.title, 
+          p.slug, 
+          p.excerpt, 
+          p.content, 
+          p.published, 
+          p.created_at, 
+          p.updated_at,
+          u.name as author_name
+        FROM blog_posts p
+        JOIN users u ON p.author_id = u.id
+        WHERE published = true
+        ORDER BY p.created_at DESC
+      `;
+      return result;
+    }
   } catch (error) {
     console.error('Error fetching posts:', error);
     return [];
@@ -38,7 +54,7 @@ export async function getAllPosts(includeUnpublished = false) {
 
 export async function getPostBySlug(slug: string) {
   try {
-    const query = `
+    const result = await sql`
       SELECT 
         p.id, 
         p.title, 
@@ -52,11 +68,10 @@ export async function getPostBySlug(slug: string) {
         u.name as author_name
       FROM blog_posts p
       JOIN users u ON p.author_id = u.id
-      WHERE p.slug = $1
+      WHERE p.slug = ${slug}
     `;
     
-    const result = await pool.query(query, [slug]);
-    return result.rows[0] || null;
+    return result[0] || null;
   } catch (error) {
     console.error('Error fetching post:', error);
     return null;
@@ -72,7 +87,7 @@ export async function createPost(post: {
   author_id: number;
 }) {
   try {
-    const query = `
+    const result = await sql`
       INSERT INTO blog_posts (
         title, 
         slug, 
@@ -81,21 +96,17 @@ export async function createPost(post: {
         published, 
         author_id
       ) VALUES (
-        $1, $2, $3, $4, $5, $6
+        ${post.title}, 
+        ${post.slug}, 
+        ${post.content}, 
+        ${post.excerpt || null}, 
+        ${post.published}, 
+        ${post.author_id}
       )
       RETURNING id, title, slug, excerpt, content, published, created_at, updated_at
     `;
     
-    const result = await pool.query(query, [
-      post.title,
-      post.slug,
-      post.content,
-      post.excerpt || null,
-      post.published,
-      post.author_id
-    ]);
-    
-    return result.rows[0];
+    return result[0];
   } catch (error) {
     console.error('Error creating post:', error);
     return null;
@@ -113,51 +124,40 @@ export async function updatePost(
   }
 ) {
   try {
-    const updates = [];
-    const values = [];
+    // Handle each field update individually to avoid dynamic SQL construction
+    // This is more verbose but safer and avoids TypeScript errors
     
-    if (post.title !== undefined) {
-      updates.push(`title = $${updates.length + 1}`);
-      values.push(post.title);
-    }
+    // First, get the current post
+    const currentPost = await sql`
+      SELECT * FROM blog_posts WHERE id = ${id}
+    `;
     
-    if (post.slug !== undefined) {
-      updates.push(`slug = $${updates.length + 1}`);
-      values.push(post.slug);
-    }
-    
-    if (post.content !== undefined) {
-      updates.push(`content = $${updates.length + 1}`);
-      values.push(post.content);
-    }
-    
-    if (post.excerpt !== undefined) {
-      updates.push(`excerpt = $${updates.length + 1}`);
-      values.push(post.excerpt);
-    }
-    
-    if (post.published !== undefined) {
-      updates.push(`published = $${updates.length + 1}`);
-      values.push(post.published);
-    }
-    
-    updates.push(`updated_at = NOW()`);
-    
-    if (updates.length === 0) {
+    if (!currentPost.length) {
       return null;
     }
     
-    const updateQuery = `
+    // Update with new values or keep existing ones
+    const title = post.title !== undefined ? post.title : currentPost[0].title;
+    const slug = post.slug !== undefined ? post.slug : currentPost[0].slug;
+    const content = post.content !== undefined ? post.content : currentPost[0].content;
+    const excerpt = post.excerpt !== undefined ? post.excerpt : currentPost[0].excerpt;
+    const published = post.published !== undefined ? post.published : currentPost[0].published;
+    
+    // Perform the update with all fields
+    const result = await sql`
       UPDATE blog_posts
-      SET ${updates.join(', ')}
-      WHERE id = $${updates.length + 1}
+      SET 
+        title = ${title},
+        slug = ${slug},
+        content = ${content},
+        excerpt = ${excerpt},
+        published = ${published},
+        updated_at = NOW()
+      WHERE id = ${id}
       RETURNING id, title, slug, excerpt, content, published, created_at, updated_at
     `;
     
-    values.push(id);
-    
-    const result = await pool.query(updateQuery, values);
-    return result.rows[0];
+    return result[0];
   } catch (error) {
     console.error('Error updating post:', error);
     return null;
@@ -166,12 +166,11 @@ export async function updatePost(
 
 export async function deletePost(id: number) {
   try {
-    const query = `
+    await sql`
       DELETE FROM blog_posts
-      WHERE id = $1
+      WHERE id = ${id}
     `;
     
-    await pool.query(query, [id]);
     return true;
   } catch (error) {
     console.error('Error deleting post:', error);
@@ -181,14 +180,13 @@ export async function deletePost(id: number) {
 
 export async function getAllTags() {
   try {
-    const query = `
+    const result = await sql`
       SELECT id, name, slug
       FROM tags
       ORDER BY name ASC
     `;
     
-    const result = await pool.query(query);
-    return result.rows;
+    return result;
   } catch (error) {
     console.error('Error fetching tags:', error);
     return [];
@@ -197,16 +195,15 @@ export async function getAllTags() {
 
 export async function getTagsForPost(postId: number) {
   try {
-    const query = `
+    const result = await sql`
       SELECT t.id, t.name, t.slug
       FROM tags t
       JOIN blog_post_tags bpt ON t.id = bpt.tag_id
-      WHERE bpt.blog_post_id = $1
+      WHERE bpt.blog_post_id = ${postId}
       ORDER BY t.name ASC
     `;
     
-    const result = await pool.query(query, [postId]);
-    return result.rows;
+    return result;
   } catch (error) {
     console.error('Error fetching tags for post:', error);
     return [];

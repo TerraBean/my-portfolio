@@ -4,7 +4,7 @@ import { FaBars, FaTimes } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link as ScrollLink } from "react-scroll";
 import Link from "next/link";
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 
 interface NavItem {
     label: string;
@@ -18,6 +18,10 @@ const Navbar: React.FC = () => {
 
     const toggleMenu = () => {
         setIsMenuOpen(!isMenuOpen);
+    };
+
+    const handleSignOut = async () => {
+        await signOut({ redirect: true, callbackUrl: '/' });
     };
 
     const navItems: NavItem[] = [
@@ -42,7 +46,7 @@ const Navbar: React.FC = () => {
                 </div>
 
                 {/* Desktop Navigation Links */}
-                <ul className="hidden md:flex space-x-6">
+                <ul className="hidden md:flex space-x-6 items-center">
                     {navItems.map((item) => (
                         <li key={item.label}>
                             {item.isScrollLink ? (
@@ -68,12 +72,32 @@ const Navbar: React.FC = () => {
                         </li>
                     ))}
                     {status === 'authenticated' && session?.user.isAdmin && (
+                        <>
+                            <li>
+                                <Link
+                                    href="/blog/admin"
+                                    className="text-base sm:text-lg text-brand-red hover:text-opacity-80 cursor-pointer transition-colors duration-200"
+                                >
+                                    Admin
+                                </Link>
+                            </li>
+                            <li>
+                                <button
+                                    onClick={handleSignOut}
+                                    className="text-base sm:text-lg text-gray-300 hover:text-white cursor-pointer transition-colors duration-200"
+                                >
+                                    Sign Out
+                                </button>
+                            </li>
+                        </>
+                    )}
+                    {status !== 'authenticated' && (
                         <li>
                             <Link
-                                href="/blog/admin"
-                                className="text-base sm:text-lg text-brand-red hover:text-opacity-80 cursor-pointer transition-colors duration-200"
+                                href="/login"
+                                className="text-base sm:text-lg bg-brand-red px-4 py-2 rounded hover:bg-opacity-90 cursor-pointer transition-colors duration-200"
                             >
-                                Admin
+                                Login
                             </Link>
                         </li>
                     )}
@@ -129,13 +153,34 @@ const Navbar: React.FC = () => {
                                 </li>
                             ))}
                             {status === 'authenticated' && session?.user.isAdmin && (
+                                <>
+                                    <li>
+                                        <Link
+                                            href="/blog/admin"
+                                            className="block text-brand-red hover:text-opacity-80 py-2 cursor-pointer transition-colors duration-200"
+                                            onClick={toggleMenu}
+                                        >
+                                            Admin
+                                        </Link>
+                                    </li>
+                                    <li>
+                                        <button
+                                            onClick={handleSignOut}
+                                            className="block text-gray-300 hover:text-white py-2 cursor-pointer transition-colors duration-200"
+                                        >
+                                            Sign Out
+                                        </button>
+                                    </li>
+                                </>
+                            )}
+                            {status !== 'authenticated' && (
                                 <li>
                                     <Link
-                                        href="/blog/admin"
-                                        className="block text-brand-red hover:text-opacity-80 py-2 cursor-pointer transition-colors duration-200"
+                                        href="/login"
+                                        className="block bg-brand-red px-4 py-2 rounded hover:bg-opacity-90 cursor-pointer transition-colors duration-200"
                                         onClick={toggleMenu}
                                     >
-                                        Admin
+                                        Login
                                     </Link>
                                 </li>
                             )}

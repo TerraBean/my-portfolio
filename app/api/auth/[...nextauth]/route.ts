@@ -1,8 +1,12 @@
 import { NextAuthOptions } from "next-auth";
 import NextAuth from "next-auth/next";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { sql } from "@neondatabase/serverless";
+import { neon } from "@neondatabase/serverless";
 import bcrypt from "bcrypt";
+
+// Initialize the SQL client with the connection string from environment variables
+const DATABASE_URL = process.env.DATABASE_URL || 'postgresql://neondb_owner:npg_kB0yUrqcg6pd@ep-black-glade-a46muedm-pooler.us-east-1.aws.neon.tech/neondb?sslmode=require';
+const sql = neon(DATABASE_URL);
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -14,18 +18,24 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
+          console.log("Missing credentials");
           return null;
         }
 
         try {
+          console.log("Attempting to authenticate user:", credentials.email);
+          
           // Find the user in the database
           const result = await sql`
             SELECT * FROM users WHERE email = ${credentials.email}
           `;
 
-          const user = result.rows[0];
+          console.log("Database query result:", result.length > 0 ? "User found" : "User not found");
+          
+          const user = result[0];
 
           if (!user) {
+            console.log("User not found in database");
             return null;
           }
 
@@ -35,10 +45,16 @@ export const authOptions: NextAuthOptions = {
             user.password
           );
 
+          console.log("Password match:", passwordMatch);
+
           if (!passwordMatch) {
+            console.log("Password does not match");
             return null;
           }
 
+          console.log("Authentication successful");
+          
+          // Return user object without sensitive data
           return {
             id: user.id.toString(),
             email: user.email,
@@ -70,9 +86,12 @@ export const authOptions: NextAuthOptions = {
   },
   pages: {
     signIn: "/login",
+    error: "/login"
   },
+  debug: process.env.NODE_ENV === "development",
   session: {
     strategy: "jwt",
+    maxAge: 30 * 24 * 60 * 60, // 30 days
   },
   secret: process.env.NEXTAUTH_SECRET,
 };

@@ -4,6 +4,7 @@ import "./globals.css";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import AuthProvider from "./components/AuthProvider";
+import { ToastProvider } from "./components/ui/toast";
 
 // Optimize font loading
 const inter = Inter({ 
@@ -44,9 +45,11 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <AuthProvider>
-          <Header />
-          <main>{children}</main>
-          <Footer />
+          <ToastProvider>
+            <Header />
+            <main>{children}</main>
+            <Footer />
+          </ToastProvider>
         </AuthProvider>
       </body>
     </html>
