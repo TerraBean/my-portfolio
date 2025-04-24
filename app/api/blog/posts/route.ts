@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getAllPosts, createPost } from '@/lib/db';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { authOptions } from '@/lib/auth';
+import { getAllPosts, createPost } from '@/lib/db';
 import slugify from 'slugify';
 
 export async function GET(request: NextRequest) {
@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
     if (includeUnpublished) {
       const session = await getServerSession(authOptions);
       
-      if (!session?.user.isAdmin) {
+      if (session?.user.role !== 'admin') {
         return NextResponse.json(
           { error: 'Unauthorized to view unpublished posts' },
           { status: 403 }
@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
     // Check if user is authorized
     const session = await getServerSession(authOptions);
     
-    if (!session?.user.isAdmin) {
+    if (session?.user.role !== 'admin') {
       return NextResponse.json(
         { error: 'Unauthorized to create posts' },
         { status: 403 }

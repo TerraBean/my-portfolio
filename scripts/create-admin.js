@@ -10,7 +10,7 @@ const sql = neon(DATABASE_URL);
 const email = 'babak@ymail.com';
 const password = 'saddam55555';
 const name = 'Admin User';
-const isAdmin = true;
+const role = 'admin';
 
 async function createAdminUser() {
   try {
@@ -29,7 +29,7 @@ async function createAdminUser() {
       // Update the existing user
       await sql`
         UPDATE users 
-        SET password = ${hashedPassword}, is_admin = ${isAdmin}
+        SET password = ${hashedPassword}, role = ${role}
         WHERE email = ${email}
       `;
       
@@ -41,8 +41,8 @@ async function createAdminUser() {
       
       // Insert the new user
       await sql`
-        INSERT INTO users (name, email, password, is_admin) 
-        VALUES (${name}, ${email}, ${hashedPassword}, ${isAdmin})
+        INSERT INTO users (name, email, password, role) 
+        VALUES (${name}, ${email}, ${hashedPassword}, ${role})
       `;
       
       console.log('Admin user created successfully!');

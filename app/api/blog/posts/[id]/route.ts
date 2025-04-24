@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getPostById, updatePost, deletePost } from '@/lib/db';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { authOptions } from '@/lib/auth';
+import { getPostById, updatePost, deletePost } from '@/lib/db';
 
 // Get a single post by ID
 export async function GET(
@@ -24,7 +24,7 @@ export async function GET(
     if (!post.published) {
       const session = await getServerSession(authOptions);
       
-      if (!session?.user.isAdmin) {
+      if (session?.user.role !== 'admin') {
         return NextResponse.json(
           { error: 'Unauthorized to view this post' },
           { status: 403 }
@@ -51,7 +51,7 @@ export async function PATCH(
     // Check if user is authorized
     const session = await getServerSession(authOptions);
     
-    if (!session?.user.isAdmin) {
+    if (session?.user.role !== 'admin') {
       return NextResponse.json(
         { error: 'Unauthorized to update posts' },
         { status: 403 }
@@ -89,7 +89,7 @@ export async function DELETE(
     // Check if user is authorized
     const session = await getServerSession(authOptions);
     
-    if (!session?.user.isAdmin) {
+    if (session?.user.role !== 'admin') {
       return NextResponse.json(
         { error: 'Unauthorized to delete posts' },
         { status: 403 }

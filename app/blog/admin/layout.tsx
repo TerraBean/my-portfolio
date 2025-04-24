@@ -17,7 +17,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   }
   
   // Redirect to login if not authenticated or not an admin
-  if (status === 'unauthenticated' || !session?.user.isAdmin) {
+  if (status === 'unauthenticated' || session?.user.role !== 'admin') {
     redirect('/login');
   }
   
