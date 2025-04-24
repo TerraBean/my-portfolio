@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
+import AuthProvider from "./components/AuthProvider";
 
 // Optimize font loading
 const inter = Inter({ 
@@ -41,11 +42,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      
       <body className={inter.className}>
-      <Header />
-        {children}
-        <Footer />
+        <AuthProvider>
+          <Header />
+          <main>{children}</main>
+          <Footer />
+        </AuthProvider>
       </body>
     </html>
   );

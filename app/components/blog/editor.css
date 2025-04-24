@@ -1,0 +1,93 @@
+.ProseMirror {
+  min-height: 300px;
+  padding: 1rem;
+  outline: none;
+}
+
+.ProseMirror p {
+  margin-bottom: 1rem;
+}
+
+.ProseMirror h1 {
+  font-size: 2rem;
+  font-weight: bold;
+  margin: 1.5rem 0 1rem;
+}
+
+.ProseMirror h2 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 1.5rem 0 1rem;
+}
+
+.ProseMirror h3 {
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin: 1.5rem 0 1rem;
+}
+
+.ProseMirror blockquote {
+  border-left: 3px solid #FFAB48;
+  padding-left: 1rem;
+  margin-left: 0;
+  margin-right: 0;
+  font-style: italic;
+}
+
+.ProseMirror ul,
+.ProseMirror ol {
+  padding-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.ProseMirror ul li {
+  list-style-type: disc;
+  margin-bottom: 0.5rem;
+}
+
+.ProseMirror ol li {
+  list-style-type: decimal;
+  margin-bottom: 0.5rem;
+}
+
+.ProseMirror code {
+  background-color: rgba(0, 0, 0, 0.3);
+  border-radius: 0.25rem;
+  padding: 0.2rem 0.4rem;
+  font-family: monospace;
+}
+
+.ProseMirror pre {
+  background-color: rgba(0, 0, 0, 0.3);
+  border-radius: 0.25rem;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  overflow-x: auto;
+}
+
+.ProseMirror pre code {
+  background-color: transparent;
+  padding: 0;
+  border-radius: 0;
+}
+
+.ProseMirror img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.25rem;
+}
+
+.ProseMirror a {
+  color: #FFAB48;
+  text-decoration: underline;
+}
+
+.ProseMirror a:hover {
+  text-decoration: none;
+}
+
+.ProseMirror mark {
+  background-color: rgba(255, 171, 72, 0.3);
+  padding: 0.1rem 0.2rem;
+  border-radius: 0.25rem;
+}
