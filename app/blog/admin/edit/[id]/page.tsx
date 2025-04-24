@@ -4,7 +4,9 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import BlogEditor from '@/app/components/blog/BlogEditor';
+import CategoryTagSelector from '@/app/components/blog/CategoryTagSelector';
 import slugify from 'slugify';
+import { useToast } from '@/app/components/ui/toast';
 
 interface BlogPost {
   id: number;
@@ -13,6 +15,19 @@ interface BlogPost {
   content: string;
   excerpt: string | null;
   published: boolean;
+}
+
+interface Category {
+  id: number;
+  name: string;
+  slug: string;
+  description?: string;
+}
+
+interface Tag {
+  id: number;
+  name: string;
+  slug: string;
 }
 
 export default function EditBlogPost({ params }: { params: { id: string } }) {
@@ -25,7 +40,10 @@ export default function EditBlogPost({ params }: { params: { id: string } }) {
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const [selectedCategories, setSelectedCategories] = useState<Category[]>([]);
+  const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
   const router = useRouter();
+  const { showToast } = useToast();
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -93,6 +111,7 @@ export default function EditBlogPost({ params }: { params: { id: string } }) {
       }
 
       // Redirect to admin dashboard on success
+      showToast('Post updated successfully', 'success');
       router.push('/blog/admin');
       router.refresh();
     } catch (error) {
@@ -207,6 +226,16 @@ export default function EditBlogPost({ params }: { params: { id: string } }) {
               <BlogEditor content={content} onChange={setContent} />
             </div>
 
+            {/* Categories and Tags Selector */}
+            <div className="bg-gray-800 p-6 rounded-lg">
+              <h2 className="text-xl font-semibold mb-4">Categories and Tags</h2>
+              <CategoryTagSelector 
+                postId={Number(params.id)}
+                onCategoriesChange={setSelectedCategories}
+                onTagsChange={setSelectedTags}
+              />
+            </div>
+
             <div className="flex items-center">
               <input
                 id="published"
@@ -216,7 +245,7 @@ export default function EditBlogPost({ params }: { params: { id: string } }) {
                 className="h-5 w-5 text-brand-red bg-gray-800 border-gray-700 rounded focus:ring-brand-red focus:ring-opacity-25"
               />
               <label htmlFor="published" className="ml-2 text-gray-300">
-                Published
+                {isPublished ? 'Published' : 'Save as draft'}
               </label>
             </div>
 

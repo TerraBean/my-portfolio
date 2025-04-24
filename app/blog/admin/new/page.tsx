@@ -4,7 +4,22 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import BlogEditor from '@/app/components/blog/BlogEditor';
+import CategoryTagSelector from '@/app/components/blog/CategoryTagSelector';
 import slugify from 'slugify';
+import { useToast } from '@/app/components/ui/toast';
+
+interface Category {
+  id: number;
+  name: string;
+  slug: string;
+  description?: string;
+}
+
+interface Tag {
+  id: number;
+  name: string;
+  slug: string;
+}
 
 export default function NewBlogPost() {
   const [title, setTitle] = useState('');
@@ -14,7 +29,10 @@ export default function NewBlogPost() {
   const [isPublished, setIsPublished] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const [selectedCategories, setSelectedCategories] = useState<Category[]>([]);
+  const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
   const router = useRouter();
+  const { showToast } = useToast();
 
   const generateSlug = () => {
     if (title) {
@@ -35,6 +53,7 @@ export default function NewBlogPost() {
     }
 
     try {
+      // Create the post
       const response = await fetch('/api/blog/posts', {
         method: 'POST',
         headers: {
@@ -54,7 +73,39 @@ export default function NewBlogPost() {
         throw new Error(data.error || 'Failed to create post');
       }
 
+      const newPost = await response.json();
+      
+      // Add categories and tags to the post
+      if (newPost.id) {
+        // Add categories
+        await Promise.all(
+          selectedCategories.map(category => 
+            fetch(`/api/blog/posts/${newPost.id}/categories`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ categoryId: category.id }),
+            })
+          )
+        );
+        
+        // Add tags
+        await Promise.all(
+          selectedTags.map(tag => 
+            fetch(`/api/blog/posts/${newPost.id}/tags`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ tagId: tag.id }),
+            })
+          )
+        );
+      }
+
       // Redirect to admin dashboard on success
+      showToast('Post created successfully', 'success');
       router.push('/blog/admin');
       router.refresh();
     } catch (error) {
@@ -141,6 +192,15 @@ export default function NewBlogPost() {
                 Content *
               </label>
               <BlogEditor content={content} onChange={setContent} />
+            </div>
+
+            {/* Categories and Tags Selector */}
+            <div className="bg-gray-800 p-6 rounded-lg">
+              <h2 className="text-xl font-semibold mb-4">Categories and Tags</h2>
+              <CategoryTagSelector 
+                onCategoriesChange={setSelectedCategories}
+                onTagsChange={setSelectedTags}
+              />
             </div>
 
             <div className="flex items-center">

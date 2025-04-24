@@ -1,8 +1,10 @@
 import { format } from 'date-fns';
-import { getPostBySlug } from '@/lib/db';
+import { getPostBySlug, getTagsForPost, getCategoriesForPost } from '@/lib/db';
 import { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import CategoryBadge from '@/app/components/blog/CategoryBadge';
+import TagBadge from '@/app/components/blog/TagBadge';
 
 interface BlogPostPageProps {
   params: {
@@ -39,6 +41,10 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       notFound();
     }
 
+    // Fetch categories and tags for this post
+    const categories = await getCategoriesForPost(post.id);
+    const tags = await getTagsForPost(post.id);
+
     return (
       <main className="min-h-screen bg-brand-dark text-white py-20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -53,13 +59,40 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             <article>
               <header className="mb-10">
                 <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">{post.title}</h1>
-                <div className="flex items-center text-gray-400 text-sm md:text-base">
+                
+                {/* Categories */}
+                {categories.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {categories.map((category) => (
+                      <CategoryBadge 
+                        key={category.id} 
+                        name={category.name} 
+                        slug={category.slug} 
+                      />
+                    ))}
+                  </div>
+                )}
+                
+                <div className="flex items-center text-gray-400 text-sm md:text-base mb-4">
                   <span>By {post.author_name}</span>
                   <span className="mx-2">•</span>
                   <time dateTime={post.created_at}>
                     {format(new Date(post.created_at), 'MMMM d, yyyy')}
                   </time>
                 </div>
+                
+                {/* Tags */}
+                {tags.length > 0 && (
+                  <div className="flex flex-wrap gap-2">
+                    {tags.map((tag) => (
+                      <TagBadge 
+                        key={tag.id} 
+                        name={tag.name} 
+                        slug={tag.slug} 
+                      />
+                    ))}
+                  </div>
+                )}
               </header>
               
               <div 

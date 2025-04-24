@@ -1,7 +1,10 @@
 import Link from 'next/link';
 import { format } from 'date-fns';
-import { getAllPosts } from '@/lib/db';
+import { getAllPosts, getTagsForPost, getCategoriesForPost } from '@/lib/db';
 import { Metadata } from 'next';
+import BlogSidebar from '@/app/components/blog/Sidebar';
+import CategoryBadge from '@/app/components/blog/CategoryBadge';
+import TagBadge from '@/app/components/blog/TagBadge';
 
 export const metadata: Metadata = {
   title: 'Blog | Adams Mujahid',
@@ -24,35 +27,76 @@ export default async function BlogPage() {
           </p>
         </div>
 
-        {posts.length === 0 ? (
-          <div className="text-center py-20">
-            <h2 className="text-2xl font-semibold mb-4">No posts yet</h2>
-            <p className="text-gray-400">Check back soon for new content!</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {posts.map((post) => (
-              <Link 
-                href={`/blog/${post.slug}`} 
-                key={post.id}
-                className="bg-brand-blue rounded-lg overflow-hidden shadow-lg transition-transform duration-300 hover:scale-105 hover:shadow-xl"
-              >
-                <div className="p-6">
-                  <h2 className="text-xl font-bold mb-3 text-white">{post.title}</h2>
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          {/* Main Content */}
+          <div className="lg:col-span-3">
+            {posts.length === 0 ? (
+              <div className="text-center py-20">
+                <h2 className="text-2xl font-semibold mb-4">No posts yet</h2>
+                <p className="text-gray-400">Check back soon for new content!</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {posts.map(async (post) => {
+                  // Fetch categories and tags for each post
+                  const categories = await getCategoriesForPost(post.id);
+                  const tags = await getTagsForPost(post.id);
                   
-                  <p className="text-gray-300 mb-4 line-clamp-3">
-                    {post.excerpt || post.content.substring(0, 150).replace(/<[^>]*>/g, '')}...
-                  </p>
-                  
-                  <div className="flex justify-between items-center text-sm text-gray-400">
-                    <span>{post.author_name}</span>
-                    <span>{format(new Date(post.created_at), 'MMM d, yyyy')}</span>
-                  </div>
-                </div>
-              </Link>
-            ))}
+                  return (
+                    <div key={post.id} className="bg-brand-blue rounded-lg overflow-hidden shadow-lg transition-transform duration-300 hover:scale-105 hover:shadow-xl">
+                      <Link 
+                        href={`/blog/${post.slug}`} 
+                        className="block p-6"
+                      >
+                        <h2 className="text-xl font-bold mb-3 text-white">{post.title}</h2>
+                        
+                        <p className="text-gray-300 mb-4 line-clamp-3">
+                          {post.excerpt || post.content.substring(0, 150).replace(/<[^>]*>/g, '')}...
+                        </p>
+                        
+                        <div className="flex justify-between items-center text-sm text-gray-400 mb-3">
+                          <span>{post.author_name}</span>
+                          <span>{format(new Date(post.created_at), 'MMM d, yyyy')}</span>
+                        </div>
+                        
+                        {/* Categories */}
+                        {categories.length > 0 && (
+                          <div className="flex flex-wrap gap-2 mb-2">
+                            {categories.map((category) => (
+                              <CategoryBadge 
+                                key={category.id} 
+                                name={category.name} 
+                                slug={category.slug} 
+                              />
+                            ))}
+                          </div>
+                        )}
+                        
+                        {/* Tags */}
+                        {tags.length > 0 && (
+                          <div className="flex flex-wrap gap-2">
+                            {tags.map((tag) => (
+                              <TagBadge 
+                                key={tag.id} 
+                                name={tag.name} 
+                                slug={tag.slug} 
+                              />
+                            ))}
+                          </div>
+                        )}
+                      </Link>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
-        )}
+          
+          {/* Sidebar */}
+          <div className="lg:col-span-1">
+            <BlogSidebar />
+          </div>
+        </div>
       </div>
     </div>
   );

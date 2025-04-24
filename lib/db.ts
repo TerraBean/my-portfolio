@@ -193,6 +193,21 @@ export async function getAllTags() {
   }
 }
 
+export async function getTagById(id: number) {
+  try {
+    const result = await sql`
+      SELECT id, name, slug
+      FROM tags
+      WHERE id = ${id}
+    `;
+    
+    return result[0] || null;
+  } catch (error) {
+    console.error('Error fetching tag by ID:', error);
+    return null;
+  }
+}
+
 export async function getTagsForPost(postId: number) {
   try {
     const result = await sql`
@@ -207,5 +222,255 @@ export async function getTagsForPost(postId: number) {
   } catch (error) {
     console.error('Error fetching tags for post:', error);
     return [];
+  }
+}
+
+export async function getAllCategories() {
+  try {
+    const result = await sql`
+      SELECT id, name, slug, description
+      FROM categories
+      ORDER BY name ASC
+    `;
+    
+    return result;
+  } catch (error) {
+    console.error('Error fetching categories:', error);
+    return [];
+  }
+}
+
+export async function getCategoriesForPost(postId: number) {
+  try {
+    const result = await sql`
+      SELECT c.id, c.name, c.slug, c.description
+      FROM categories c
+      JOIN blog_post_categories bpc ON c.id = bpc.category_id
+      WHERE bpc.blog_post_id = ${postId}
+      ORDER BY c.name ASC
+    `;
+    
+    return result;
+  } catch (error) {
+    console.error('Error fetching categories for post:', error);
+    return [];
+  }
+}
+
+export async function getPostsByCategory(categorySlug: string) {
+  try {
+    const result = await sql`
+      SELECT 
+        p.id, 
+        p.title, 
+        p.slug, 
+        p.excerpt, 
+        p.content, 
+        p.published, 
+        p.created_at, 
+        p.updated_at,
+        u.name as author_name
+      FROM blog_posts p
+      JOIN users u ON p.author_id = u.id
+      JOIN blog_post_categories bpc ON p.id = bpc.blog_post_id
+      JOIN categories c ON bpc.category_id = c.id
+      WHERE c.slug = ${categorySlug} AND p.published = true
+      ORDER BY p.created_at DESC
+    `;
+    
+    return result;
+  } catch (error) {
+    console.error('Error fetching posts by category:', error);
+    return [];
+  }
+}
+
+export async function getPostsByTag(tagSlug: string) {
+  try {
+    const result = await sql`
+      SELECT 
+        p.id, 
+        p.title, 
+        p.slug, 
+        p.excerpt, 
+        p.content, 
+        p.published, 
+        p.created_at, 
+        p.updated_at,
+        u.name as author_name
+      FROM blog_posts p
+      JOIN users u ON p.author_id = u.id
+      JOIN blog_post_tags bpt ON p.id = bpt.blog_post_id
+      JOIN tags t ON bpt.tag_id = t.id
+      WHERE t.slug = ${tagSlug} AND p.published = true
+      ORDER BY p.created_at DESC
+    `;
+    
+    return result;
+  } catch (error) {
+    console.error('Error fetching posts by tag:', error);
+    return [];
+  }
+}
+
+export async function addCategoryToPost(postId: number, categoryId: number) {
+  try {
+    await sql`
+      INSERT INTO blog_post_categories (blog_post_id, category_id)
+      VALUES (${postId}, ${categoryId})
+      ON CONFLICT (blog_post_id, category_id) DO NOTHING
+    `;
+    return true;
+  } catch (error) {
+    console.error('Error adding category to post:', error);
+    return false;
+  }
+}
+
+export async function removeCategoryFromPost(postId: number, categoryId: number) {
+  try {
+    await sql`
+      DELETE FROM blog_post_categories
+      WHERE blog_post_id = ${postId} AND category_id = ${categoryId}
+    `;
+    return true;
+  } catch (error) {
+    console.error('Error removing category from post:', error);
+    return false;
+  }
+}
+
+export async function createCategory(category: { name: string; slug: string; description?: string }) {
+  try {
+    const result = await sql`
+      INSERT INTO categories (name, slug, description)
+      VALUES (${category.name}, ${category.slug}, ${category.description || null})
+      RETURNING id, name, slug, description
+    `;
+    return result[0];
+  } catch (error) {
+    console.error('Error creating category:', error);
+    return null;
+  }
+}
+
+export async function updateCategory(
+  id: number,
+  category: { name?: string; slug?: string; description?: string }
+) {
+  try {
+    // Get current category
+    const currentCategory = await sql`
+      SELECT * FROM categories WHERE id = ${id}
+    `;
+    
+    if (!currentCategory.length) {
+      return null;
+    }
+    
+    // Update with new values or keep existing ones
+    const name = category.name !== undefined ? category.name : currentCategory[0].name;
+    const slug = category.slug !== undefined ? category.slug : currentCategory[0].slug;
+    const description = category.description !== undefined ? category.description : currentCategory[0].description;
+    
+    const result = await sql`
+      UPDATE categories
+      SET 
+        name = ${name},
+        slug = ${slug},
+        description = ${description},
+        updated_at = NOW()
+      WHERE id = ${id}
+      RETURNING id, name, slug, description
+    `;
+    
+    return result[0];
+  } catch (error) {
+    console.error('Error updating category:', error);
+    return null;
+  }
+}
+
+export async function deleteCategory(id: number) {
+  try {
+    await sql`
+      DELETE FROM categories
+      WHERE id = ${id}
+    `;
+    
+    return true;
+  } catch (error) {
+    console.error('Error deleting category:', error);
+    return false;
+  }
+}
+
+export async function addTagToPost(postId: number, tagId: number) {
+  try {
+    await sql`
+      INSERT INTO blog_post_tags (blog_post_id, tag_id)
+      VALUES (${postId}, ${tagId})
+      ON CONFLICT (blog_post_id, tag_id) DO NOTHING
+    `;
+    return true;
+  } catch (error) {
+    console.error('Error adding tag to post:', error);
+    return false;
+  }
+}
+
+export async function removeTagFromPost(postId: number, tagId: number) {
+  try {
+    await sql`
+      DELETE FROM blog_post_tags
+      WHERE blog_post_id = ${postId} AND tag_id = ${tagId}
+    `;
+    return true;
+  } catch (error) {
+    console.error('Error removing tag from post:', error);
+    return false;
+  }
+}
+
+export async function createTag(tag: { name: string; slug: string }) {
+  try {
+    const result = await sql`
+      INSERT INTO tags (name, slug)
+      VALUES (${tag.name}, ${tag.slug})
+      RETURNING id, name, slug
+    `;
+    return result[0];
+  } catch (error) {
+    console.error('Error creating tag:', error);
+    return null;
+  }
+}
+
+export async function updateTag({ id, name, slug }: { id: number; name: string; slug: string }) {
+  try {
+    await sql`
+      UPDATE tags
+      SET name = ${name}, slug = ${slug}
+      WHERE id = ${id}
+    `;
+    
+    return true;
+  } catch (error) {
+    console.error('Error updating tag:', error);
+    return false;
+  }
+}
+
+export async function deleteTag(id: number) {
+  try {
+    await sql`
+      DELETE FROM tags
+      WHERE id = ${id}
+    `;
+    
+    return true;
+  } catch (error) {
+    console.error('Error deleting tag:', error);
+    return false;
   }
 }
