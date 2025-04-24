@@ -43,7 +43,7 @@ export default async function EditCategoryPage({ params }: EditCategoryPageProps
     const description = formData.get('description') as string;
     
     if (!id || !name || !slug) {
-      return { error: 'ID, name, and slug are required' };
+      throw new Error('ID, name, and slug are required');
     }
     
     await updateCategory(id, {
