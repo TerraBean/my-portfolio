@@ -34,7 +34,7 @@ export default async function EditCategoryPage({ params }: EditCategoryPageProps
     notFound();
   }
 
-  async function handleUpdateCategory(formData: FormData) {
+  async function handleUpdateCategory(formData: FormData): Promise<void> {
     'use server';
     
     const id = Number(params.id);

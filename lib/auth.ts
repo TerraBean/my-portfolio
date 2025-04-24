@@ -33,7 +33,7 @@ declare module "next-auth" {
 // Extend the JWT payload
 declare module "next-auth/jwt" {
   interface JWT {
-    id?: string;
+    id: string;
     role?: string | null;
   }
 }
