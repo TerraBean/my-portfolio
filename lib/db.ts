@@ -1,7 +1,7 @@
 import { neon, neonConfig } from '@neondatabase/serverless';
 
 // Get the database URL from environment variables
-const DATABASE_URL = process.env.DATABASE_URL || 'postgresql://neondb_owner:npg_kB0yUrqcg6pd@ep-black-glade-a46muedm-pooler.us-east-1.aws.neon.tech/neondb?sslmode=require';
+const DATABASE_URL = process.env.NEW_DATABASE_URL || 'postgresql://neondb_owner:npg_Dl5GucfaZYS9@ep-frosty-boat-abcvz7ro-pooler.eu-west-2.aws.neon.tech/neondb?sslmode=require';
 
 // Create a SQL client
 const sql = neon(DATABASE_URL);
