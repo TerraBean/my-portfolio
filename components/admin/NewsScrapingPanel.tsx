@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { ScrapedNews, EnhancedPost, ConnectionStatus } from '@/lib/types/news';
 
 interface NewsScrapingPanelProps {
@@ -16,18 +16,13 @@ export default function NewsScrapingPanel({ className }: NewsScrapingPanelProps)
   const [isTestingConnection, setIsTestingConnection] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
-  // Test AI connection on component mount
-  useEffect(() => {
-    testConnection();
-  }, []);
-
   const showMessage = (type: 'success' | 'error', text: string) => {
     setMessage({ type, text });
     setTimeout(() => setMessage(null), 5000);
   };
 
   // Test AI service connection
-  const testConnection = async () => {
+  const testConnection = useCallback(async () => {
     setIsTestingConnection(true);
     try {
       const response = await fetch('/api/admin/news/test-connection');
@@ -56,7 +51,12 @@ export default function NewsScrapingPanel({ className }: NewsScrapingPanelProps)
     } finally {
       setIsTestingConnection(false);
     }
-  };
+  }, []);
+
+  // Test AI connection on component mount
+  useEffect(() => {
+    testConnection();
+  }, [testConnection]);
 
   // Handle news scraping
   const handleScrapeNews = async (autoEnhance = false) => {
@@ -282,7 +282,7 @@ export default function NewsScrapingPanel({ className }: NewsScrapingPanelProps)
       {/* Empty State */}
       {scrapedNews.length === 0 && enhancedPosts.length === 0 && !isLoading && (
         <div className="bg-white rounded-lg border border-gray-200 p-8 text-center">
-          <p className="text-gray-500">No articles scraped yet. Click "Scrape News" to get started.</p>
+          <p className="text-gray-500">No articles scraped yet. Click &ldquo;Scrape News&rdquo; to get started.</p>
         </div>
       )}
     </div>

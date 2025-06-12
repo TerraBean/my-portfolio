@@ -93,8 +93,6 @@ export class CronService {
       } catch (error) {
         console.error('Automation error:', error);
       }
-    }, {
-      scheduled: false // Don't start immediately
     });
 
     this.jobs.set(jobId, job);

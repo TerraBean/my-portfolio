@@ -56,10 +56,8 @@ export class NewsScrapingService {
             },
             includeDomains: this.ALLOWED_DOMAINS,
             startPublishedDate: this.getDateDaysAgo(7), // Last 7 days
-          });
-
-          const newsItems = searchResults.results.map(result => ({
-            title: result.title,
+          });          const newsItems = searchResults.results.map(result => ({
+            title: result.title || 'Untitled Article',
             content: result.text || '',
             url: result.url,
             publishedDate: result.publishedDate || new Date().toISOString(),

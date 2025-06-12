@@ -3,7 +3,7 @@
 import { useState } from 'react'
 
 export default function TestEnvironmentPage() {
-  const [testResults, setTestResults] = useState(null)
+  const [testResults, setTestResults] = useState<{success: boolean; error?: string; [key: string]: any} | null>(null)
   const [loading, setLoading] = useState(false)
 
   const runTests = async () => {
@@ -11,11 +11,10 @@ export default function TestEnvironmentPage() {
     try {
       const response = await fetch('/api/admin/news/test-connection')
       const data = await response.json()
-      setTestResults(data)
-    } catch (error) {
+      setTestResults(data)    } catch (error) {
       setTestResults({
         success: false,
-        error: 'Failed to run tests: ' + error.message
+        error: 'Failed to run tests: ' + (error instanceof Error ? error.message : String(error))
       })
     } finally {
       setLoading(false)
