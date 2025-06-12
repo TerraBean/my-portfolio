@@ -129,7 +129,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Admin Navigation Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <Link 
             href="/blog/admin/categories"
             className="bg-brand-blue/80 hover:bg-brand-blue rounded-lg p-6 transition-colors shadow-lg"
@@ -144,6 +144,14 @@ export default function AdminDashboard() {
           >
             <h2 className="text-xl font-bold mb-2">Manage Tags</h2>
             <p className="text-gray-300">Create, edit, and delete blog post tags</p>
+          </Link>
+          
+          <Link 
+            href="/blog/admin/news"
+            className="bg-emerald-600/80 hover:bg-emerald-600 rounded-lg p-6 transition-colors shadow-lg"
+          >
+            <h2 className="text-xl font-bold mb-2">News Scraping</h2>
+            <p className="text-gray-300">Scrape Ghana news and enhance with AI</p>
           </Link>
           
           <Link 

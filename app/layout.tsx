@@ -6,6 +6,13 @@ import Footer from "./components/Footer";
 import AuthProvider from "./components/AuthProvider";
 import { ToastProvider } from "./components/ui/toast";
 
+// Initialize services on server startup
+if (typeof window === 'undefined') {
+  import('../lib/startup').then(({ initializeServices }) => {
+    initializeServices();
+  }).catch(console.error);
+}
+
 // Optimize font loading
 const inter = Inter({ 
   subsets: ["latin"],

@@ -1,5 +1,7 @@
 # Dependencies Installation
 
+use pnpm for all installations
+
 ## Core Dependencies
 
 ```bash

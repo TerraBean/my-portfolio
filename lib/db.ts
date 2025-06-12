@@ -500,3 +500,116 @@ export async function deleteTag(id: number) {
     return false;
   }
 }
+
+// Export the sql client for direct use
+export { sql };
+
+// News-related database operations
+export async function saveScrapedNews(newsItems: Array<{
+  title: string;
+  content: string;
+  url: string;
+  publishedDate: string;
+  source: string;
+  enhancedContent?: string;
+}>) {
+  try {
+    const results = [];
+    for (const item of newsItems) {
+      const result = await sql`
+        INSERT INTO scraped_news (
+          title, 
+          content, 
+          url, 
+          published_date, 
+          source,
+          enhanced_content,
+          created_at
+        ) VALUES (
+          ${item.title}, 
+          ${item.content}, 
+          ${item.url}, 
+          ${item.publishedDate}, 
+          ${item.source},
+          ${item.enhancedContent || null},
+          NOW()
+        )
+        ON CONFLICT (url) DO UPDATE SET
+          title = EXCLUDED.title,
+          content = EXCLUDED.content,
+          enhanced_content = EXCLUDED.enhanced_content,
+          updated_at = NOW()
+        RETURNING id, title, url, source, created_at
+      `;
+      results.push(result[0]);
+    }
+    return results;
+  } catch (error) {
+    console.error('Error saving scraped news:', error);
+    return [];
+  }
+}
+
+export async function getAllScrapedNews(limit = 50) {
+  try {
+    const result = await sql`
+      SELECT 
+        id, 
+        title, 
+        content, 
+        url, 
+        published_date, 
+        source,
+        enhanced_content,
+        created_at,
+        updated_at
+      FROM scraped_news
+      ORDER BY published_date DESC, created_at DESC
+      LIMIT ${limit}
+    `;
+    return result;
+  } catch (error) {
+    console.error('Error fetching scraped news:', error);
+    return [];
+  }
+}
+
+export async function getScrapedNewsBySource(source: string, limit = 20) {
+  try {
+    const result = await sql`
+      SELECT
+        id, 
+        title, 
+        content, 
+        url, 
+        published_date, 
+        source,
+        enhanced_content,
+        created_at,
+        updated_at
+      FROM scraped_news
+      WHERE source = ${source}
+      ORDER BY published_date DESC, created_at DESC
+      LIMIT ${limit}
+    `;
+    return result;
+  } catch (error) {
+    console.error('Error fetching scraped news by source:', error);
+    return [];
+  }
+}
+
+export async function deleteScrapedNews(id: number) {
+  try {
+    await sql`
+      DELETE FROM scraped_news
+      WHERE id = ${id}
+    `;
+    
+    return true;
+  } catch (error) {
+    console.error('Error deleting scraped news:', error);
+    return false;
+  }
+} 
+       
