@@ -104,6 +104,20 @@ const projects: Project[] = [
     projectUrl: "https://whispernews.vercel.app/",
     technologies: ["Vue.js", "Firebase", "SASS"],
   },
+  {
+    title: "Build Bright Haven",
+    description: "A comprehensive marketplace platform for construction materials and building supplies with modern e-commerce features.",
+    imageUrl: "/images/build1.png",
+    projectUrl: "https://build-bright-haven.lovable.app",
+    technologies: ["React", "TypeScript", "Lovable"],
+  },
+  {
+    title: "BuilderMart",
+    description: "A comprehensive marketplace platform for construction materials and building supplies with modern e-commerce features.",
+    imageUrl: "/images/build2.png",
+    projectUrl: "https://buildermart.vercel.app/",
+    technologies: ["Next.js", "React", "Tailwind CSS", "Vercel"],
+  },
 ];
 
 const processSteps = [
